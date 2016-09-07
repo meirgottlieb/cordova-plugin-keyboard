@@ -177,7 +177,9 @@ static IMP WKOriginalImp;
         return;
     }
 
-    self.webView.scrollView.scrollEnabled = YES;
+    if (!self.disableScrolling) {
+        self.webView.scrollView.scrollEnabled = YES;
+    }
 
     CGRect screen = [[UIScreen mainScreen] bounds];
     CGRect statusBar = [[UIApplication sharedApplication] statusBarFrame];
