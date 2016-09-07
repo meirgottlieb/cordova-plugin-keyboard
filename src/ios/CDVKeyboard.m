@@ -177,7 +177,7 @@ static IMP WKOriginalImp;
         return;
     }
 
-    self.webView.scrollView.scrollEnabled = !self.disableScrolling;
+    self.webView.scrollView.scrollEnabled = YES;
 
     CGRect screen = [[UIScreen mainScreen] bounds];
     CGRect statusBar = [[UIApplication sharedApplication] statusBarFrame];
@@ -244,6 +244,7 @@ static IMP WKOriginalImp;
     }
 
     self.disableScrolling = [value boolValue];
+    self.webView.scrollView.scrollEnabled = !self.disableScrolling;
 }
 
 - (void)disableScrollingInShrinkView:(CDVInvokedUrlCommand*)command
