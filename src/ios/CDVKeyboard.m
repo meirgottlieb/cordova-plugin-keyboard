@@ -59,6 +59,11 @@
         self.disableScrollingInShrinkView = [(NSNumber*)[self settingForKey:setting] boolValue];
     }
 
+    setting = @"DisableScrolling";
+    if ([self settingForKey:setting]) {
+        self.disableScrolling = [(NSNumber*)[self settingForKey:setting] boolValue];
+    }
+
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     __weak CDVKeyboard* weakSelf = self;
 
@@ -172,7 +177,7 @@ static IMP WKOriginalImp;
         return;
     }
 
-    self.webView.scrollView.scrollEnabled = YES;
+    self.webView.scrollView.scrollEnabled = !self.disableScrolling;
 
     CGRect screen = [[UIScreen mainScreen] bounds];
     CGRect statusBar = [[UIApplication sharedApplication] statusBarFrame];
@@ -197,7 +202,9 @@ static IMP WKOriginalImp;
     CGRect keyboardIntersection = CGRectIntersection(screen, keyboard);
     if (CGRectContainsRect(screen, keyboardIntersection) && !CGRectIsEmpty(keyboardIntersection) && _shrinkView && self.keyboardIsVisible) {
         screen.size.height -= keyboardIntersection.size.height;
-        self.webView.scrollView.scrollEnabled = !self.disableScrollingInShrinkView;
+        if (!self.disableScrolling) {
+            self.webView.scrollView.scrollEnabled = !self.disableScrollingInShrinkView;
+        }
     }
 
     // A view's frame is in its superview's coordinate system so we need to convert again
@@ -227,6 +234,16 @@ static IMP WKOriginalImp;
     }
 
     self.shrinkView = [value boolValue];
+}
+
+- (void)disableScrolling:(CDVInvokedUrlCommand*)command
+{
+    id value = [command.arguments objectAtIndex:0];
+    if (!([value isKindOfClass:[NSNumber class]])) {
+        value = [NSNumber numberWithBool:NO];
+    }
+
+    self.disableScrolling = [value boolValue];
 }
 
 - (void)disableScrollingInShrinkView:(CDVInvokedUrlCommand*)command
